@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Project Slides — DermIA{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Project presentation</h1>
+  <p class="subtitle">Open the course presentation for this educational project.</p>
+  <a class="button" href="{{ url_for('open_pdf') }}" target="_blank" rel="noopener">Open the PDF slides</a>
+</section>
+{% endblock %}
