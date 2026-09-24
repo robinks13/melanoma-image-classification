@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Try an image</h2>
+  <p class="muted">Upload a dermoscopic image to view the model's predicted class and softmax score.</p>
+  <form method="POST" enctype="multipart/form-data">
+    <label for="image">Image file</label>
+    <input id="image" type="file" name="image" accept="image/*" required>
+    <button type="submit">Run prediction</button>
+  </form>
+  {% if error %}<p class="notice" role="alert">{{ error }}</p>{% endif %}
+  {% if result %}
+    <section class="result" aria-live="polite">
+      <span class="eyebrow">MODEL OUTPUT</span>
+      <h3>{{ result }}</h3>
+      <p>Softmax score: {{ confidence }}%</p>
+    </section>
+  {% endif %}
+  <p class="notice">A model score is not a diagnosis. Consult a qualified clinician for medical concerns.</p>
+</section>
+{% endblock %}
