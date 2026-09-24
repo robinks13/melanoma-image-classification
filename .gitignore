@@ -1,0 +1,21 @@
+# Local datasets and model checkpoints
+melanoma-cancer-dataset/
+*.pth
+*.pt
+
+# Python and notebook artifacts
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Local OS/editor files
+.DS_Store
+.idea/
+.vscode/
+/mes_slides.pdf
+
+# Runtime outputs
+runs/
+*.log
