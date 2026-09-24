@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Melanoma Classifier{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <span class="eyebrow">EDUCATIONAL COMPUTER VISION PROJECT</span>
+    <h1>Skin lesion image classifier</h1>
+    <p>Experiment with a PyTorch ResNet-18 model on dermoscopic images.</p>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer>This demo is not clinically validated and must not be used for diagnosis or treatment decisions.</footer>
+</body>
+</html>
