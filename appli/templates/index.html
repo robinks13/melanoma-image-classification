@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}DermIA — Image Classification Demo{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>Melanoma image classification</h1>
+  <p class="subtitle">Upload a dermoscopic image to see the output of this educational ResNet-18 experiment.</p>
+  <form method="POST" enctype="multipart/form-data">
+    <label for="image">Choose an image</label>
+    <input id="image" type="file" name="image" accept="image/*" required>
+    <button type="submit">Run the demo</button>
+  </form>
+  {% if result %}
+    <section class="result" aria-live="polite">
+      <h2 class="{{ 'malignant' if 'Malin' in result else 'benign' }}">{{ result }}</h2>
+      <p>Model confidence score: {{ confidence }}%</p>
+    </section>
+  {% endif %}
+  <p class="notice">For education only. This unvalidated model is not a medical device and must not be used for diagnosis or treatment decisions.</p>
+</section>
+{% endblock %}
