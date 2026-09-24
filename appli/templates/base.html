@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}DermIA — Educational Demo{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <strong>DermIA</strong>
+    <p>Educational melanoma image-classification demonstration</p>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer class="site-footer">
+    Educational use only. This model is not clinically validated and must not be used for diagnosis or treatment decisions.
+  </footer>
+</body>
+</html>
