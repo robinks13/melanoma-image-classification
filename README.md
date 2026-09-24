@@ -1,92 +1,92 @@
 # Melanoma Image Classification
 
-An educational computer vision project that compares a custom convolutional neural network (CNN) with a fine-tuned ResNet-18 to classify dermoscopic images as **benign** or **malignant**. The project also includes a small Flask interface for experimenting with single-image predictions.
+An educational computer-vision project that compares a compact CNN with ResNet-18 for binary classification of dermoscopic images. The repository is organized as a small Python package with reusable data, model, training, and inference modules, plus command-line workflows and a Flask demo.
 
-> **Research/education only.** This model is not a medical device and must not be used to diagnose, screen, or guide treatment. Its predictions and confidence scores are not clinically validated.
+> **Educational use only.** This model is not a medical device and has not been clinically validated. Its class scores must not be used for screening, diagnosis, or treatment decisions.
 
-## Project overview
+## Architecture
 
-- Explore and preprocess a two-class image dataset with PyTorch and torchvision.
-- Train a custom CNN and experiment with transfer learning using ResNet-18.
-- Track training and validation loss/accuracy and inspect a confusion matrix.
-- Run an optional Flask demo that accepts an image and displays the model output.
+```text
+src/melanoma_classifier/   Reusable package: data, transforms, models, training, inference
+scripts/                   Training and single-image prediction entry points
+web/                       Flask demo, templates, and styles
+reports/figures/           Existing learning curves and confusion matrix
+docs/                      Course presentation
+```
 
-The repository contains the training and analysis code, plots, and presentation material. The image dataset and model checkpoints are excluded from version control; see [Data and model files](#data-and-model-files). Performance numbers are intentionally not reported here because the original dataset split and evaluation protocol have not yet been independently verified.
-
-## Repository contents
-
-| File | Purpose |
-| --- | --- |
-| `main.py` | Train the custom CNN and save learning curves. |
-| `model.py`, `train.py` | CNN architecture and reusable training/evaluation loops. |
-| `dataset.py`, `transforms.py` | Image loading, preprocessing, normalization, and augmentation. |
-| `partie*.py`, `projet_cnn.py` | Course exercises and experiments for data exploration and model development. |
-| `detect.py` | Load the ResNet-18 checkpoint and predict a single image. |
-| `appli/` | Small Flask website, HTML/CSS templates, and PDF view template. |
-| `appli/mes_slides.pdf` | Project presentation/report slides (also served by the Flask site). |
-| `courbes_cnn_simple.png`, `courbes_resnet.png`, `matrice_confusion.png` | Existing experiment visualizations. |
+The image dataset and model checkpoints are excluded from version control. Existing experiment figures are included as project artifacts; metrics are not presented here as validated results because the dataset source and split protocol have not yet been verified.
 
 ## Setup
 
-Use Python 3.10 or 3.11 in a virtual environment. Install a PyTorch build appropriate for your operating system and hardware from the [official PyTorch installation selector](https://pytorch.org/get-started/locally/), then install the remaining packages:
+Use Python 3.10 or newer. Create a virtual environment and install the package:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Data and model files
+For GPU support, first install the PyTorch build that matches your operating system and CUDA version using the [official PyTorch selector](https://pytorch.org/get-started/locally/).
 
-Place the dataset in this structure (the folders become the class labels):
+## Dataset layout
+
+Place the dataset outside version control using class-named folders:
 
 ```text
-melanoma-cancer-dataset/
+data/melanoma/
 ├── train/
 │   ├── Benign/
 │   └── Malignant/
-└── test/
+└── val/
     ├── Benign/
     └── Malignant/
 ```
 
-The dataset is not included. Obtain it only from a source whose usage terms permit your intended use, and document the exact source, license, and split before publishing or reporting results. Do not commit patient-identifiable or otherwise restricted data.
+Each split must use the same class folder names. The loader assigns labels in alphabetical order. Before reporting performance, document the dataset source and license, keep patient-level groups separated between train and validation, and evaluate once on a held-out test set.
 
-The trained ResNet-18 checkpoint (`resnet18_melanoma_final.pth`) is also not included because it is a large binary file. To reproduce predictions, provide a compatible checkpoint at the path expected by the script. The Flask demo expects the checkpoint in `appli/resnet18_melanoma_final.pth`.
-
-## Run the experiments
-
-From this project directory, after placing the dataset as shown above:
+## Train
 
 ```bash
-python main.py
+python scripts/train.py --data-dir data/melanoma --model resnet18 --epochs 20
 ```
 
-`main.py` trains the custom CNN for 20 epochs and displays/saves its learning curves. The analysis scripts are course experiments and some are exploratory rather than a single polished, end-to-end training pipeline. Review each script's data paths and transforms before running it. In particular, confirm that validation data is drawn from the intended `test` split and that no test data is used for model selection.
+Use `--model simple-cnn` for the baseline. The script reports per-epoch loss and accuracy and saves the best validation checkpoint to `artifacts/best_model.pth` by default. Training uses the project’s 128 × 128 preprocessing and training-only augmentation.
 
-## Run the web demo
-
-After installing dependencies and placing the checkpoint under `appli/`:
+## Predict one image
 
 ```bash
-cd appli
-python app.py
+python scripts/predict.py path/to/image.jpg --checkpoint artifacts/best_model.pth
 ```
 
-Open the local address printed by Flask and upload an image. The demo runs inference on the CPU. Do not expose it publicly or submit real patient images.
+The prediction score is the model’s softmax output, not a calibrated probability.
+
+## Run the Flask demo
+
+After placing a compatible checkpoint at `artifacts/best_model.pth` (or setting `MELANOMA_CHECKPOINT` to its path):
+
+```bash
+python web/app.py
+```
+
+Open the local address printed by Flask. The demo runs on the CPU by default and limits uploads to 10 MB. Do not expose it publicly or upload patient images.
+
+## Existing project artifacts
+
+- [CNN learning curves](reports/figures/cnn-learning-curves.png)
+- [ResNet-18 learning curves](reports/figures/resnet18-learning-curves.png)
+- [Confusion matrix](reports/figures/confusion-matrix.png)
+- [Course presentation](docs/project-presentation.pdf)
 
 ## Limitations
 
-- This is a course project, not a clinically validated model.
-- The dataset source, license, size, class balance, and split methodology still need to be documented by the project author.
-- The demo's confidence score is a softmax output, not a calibrated probability of disease.
-- Results may not generalize across devices, populations, image acquisition settings, or clinical settings.
-- Code paths and image-size assumptions vary among exploratory scripts; check configuration before training or inference.
+- The dataset provenance, license, sample count, and split methodology still need to be confirmed by the project author.
+- Results may not generalize across populations, imaging equipment, or clinical settings.
+- A confidence score is not a clinical risk estimate.
+- This repository is a course project and is not suitable for medical use.
 
 ## Français
 
-Projet pédagogique de vision par ordinateur comparant un CNN développé pour le projet et un ResNet-18 ajusté pour classer des images de lésions cutanées en deux catégories : **bénigne** ou **maligne**. Une interface Flask permet également de tester une image.
+Projet pédagogique de vision par ordinateur comparant un CNN compact à ResNet-18 pour classer des images dermoscopiques en deux catégories. Le dépôt sépare le code réutilisable, les scripts d’entraînement et de prédiction, la démo Flask, les figures et le rapport.
 
-**Ce projet n'est pas un dispositif médical.** Il ne doit pas servir au dépistage, au diagnostic ou à une décision de traitement. Le jeu de données et les poids entraînés ne sont pas inclus ; leur provenance, leur licence et le protocole d'évaluation doivent être précisés avant toute publication de résultats.
-
-Voir les sections ci-dessus pour l'installation, la structure attendue des données et le lancement des expériences (`python main.py`) ou de la démo (`cd appli && python app.py`).
+Le jeu de données et les poids du modèle ne sont pas inclus. Le modèle n’est pas validé cliniquement et ne doit jamais être utilisé pour le dépistage, le diagnostic ou le choix d’un traitement. Consulte les instructions ci-dessus pour l’installation et l’organisation des données.
